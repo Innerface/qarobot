@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Dashboard with Off-canvas Sidebar</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="{{url_for('static', filename='bootstrap-3.3.7-dist/css/bootstrap.min.css')}}" rel="stylesheet">
+		<!--[if lt IE 9]>
+			<script src="{{url_for('static', filename='js/html5.js')}}"></script>
+		<![endif]-->
+		<link href="{{url_for('static', filename='css/styles.css')}}" rel="stylesheet">
+        <script src="{{url_for('static', filename='jquery-validation-1.14.0/dist/jquery.validate.min.js')}}"></script>
+	</head>
+	<body>
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">智能客服系统</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Help</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+</nav>
+
+<div class="container-fluid">
+      <div class="row row-offcanvas row-offcanvas-left">
+         <div class="col-sm-3 col-md-2 sidebar-offcanvas" id="sidebar" role="navigation">
+            <ul class="nav nav-sidebar">
+              <li><a href="../client">客户信息表</a></li>
+              <li><a href="#">同义词</a></li>
+              <li><a href="../emotional">情感词</a></li>
+              <li><a href="../sensitive">敏感词</a></li>
+              <li><a href="../">系统配置</a></li>
+              <li><a href="../">日志展示</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 col-md-10 main">
+          <div class="table-responsive">
+            <div class="table-responsive">
+              <!--<span>asdasdz</span>-->
+            </div>
+          </div>
+
+          <h2 class="sub-header">同义词管理</h2>
+          <div class="table-responsive">
+              <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addModal">新建同义词</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-striped ">
+              <thead>
+                <tr>
+                  <!--<th>id</th>-->
+                  <th>词条</th>
+                  <th>父级词条id</th>
+                  <th>计数</th>
+                  <th>状态是否可用</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for synonyms in  synonyms_l%}
+                <tr>
+                  <td id="word_{{synonyms.id}}">{{synonyms.word }}</td>
+                  <td id="parent_id_{{synonyms.id}}">{{synonyms.parent_id }}</td>
+                  <td id="count_{{synonyms.id}}">{{synonyms.count }}</td>
+                  <td id="status_{{synonyms.id}}">{{synonyms.status}}</td>
+                  <td >{{synonyms.create_time }}</td>
+                  <td>
+                       <a data-toggle="modal" data-target="#changeModal" onclick="get_synonyms_id('{{synonyms.id}}')">编辑</a>
+                       <a onclick="delete_object('{{synonyms.id}}')">删除</a>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+      </div><!--/row-->
+
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        新用户
+                    </h4>
+                </div>
+                <div class="modal-body">
+
+                  <div class="form-l">
+                      <form class="form-horizontal" id="add_form" method="post">
+                          <!--<div class="form-group">-->
+                              <!--<div class="col-xs-2 control-label">-->
+                                  <!--<label>文件</label>-->
+                              <!--</div>-->
+                              <!--<div class="col-xs-5">-->
+                                  <!--<input class="form-control" id="file_name" name="fileName" placeholder="" required="" type="hidden" value="">-->
+                                  <!--<input id="url" name="url" type="hidden" value="">-->
+                                  <!--<input class="form-control" id="solr_file_id" name="file" type="file">-->
+                              <!--</div>-->
+                          <!--</div>-->
+                          <input class="form-control" name="action" type="hidden" value="add">
+                          <div class="form-group">
+                              <div class="col-xs-2 control-label">
+                                  <label for="word">词条</label>
+                              </div>
+                              <div class="col-xs-10">
+                                  <input class="form-control" id="word" name="word" style="width: 80%">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <div class="col-xs-2 control-label">
+                                  <label for="parent_id">父级词条id</label>
+                              </div>
+                              <div class="col-xs-10">
+                                  <input class="form-control" id="parent_id" name="parent_id" style="width: 80%">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <div class="col-xs-2 control-label">
+                                  <label for="count">计数</label>
+                              </div>
+                              <div class="col-xs-10">
+                                  <input class="form-control" id="count" name="count" style="width: 80%">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <div class="col-xs-2 control-label">
+                                  <label for="status">状态是否可用</label>
+                              </div>
+                              <div class="col-xs-10">
+                                  <input class="form-control" id="status" name="status" style="width: 80%">
+                              </div>
+                          </div>
+                          <!--<div class="form-group">-->
+                              <!--<div class="col-xs-2 control-label">-->
+                                  <!--<label>业务线</label>-->
+                              <!--</div>-->
+                              <!--<div class="col-xs-10">-->
+                                  <!--<select class="form-control" id="business_select" name="businessId">-->
+
+                                  <!--<option selected="selected" value="-1">&#45;&#45;请选择&#45;&#45;</option><option value="1">测试</option><option value="2">理财</option><option value="3">借记卡</option><option value="4">信用卡客服组</option><option value="5">test3</option><option value="6">11</option></select>-->
+                              <!--</div>-->
+                          <!--</div>-->
+                          <!--<div class="form-group">-->
+                              <!--<div class="col-xs-2 control-label">-->
+                                  <!--<label>审批人</label>-->
+                              <!--</div>-->
+                              <!--<div class="col-xs-10">-->
+                                  <!--<select class="form-control" id="reviewUser_select" name="reviewId">-->
+
+                                  <!--</select>-->
+                              <!--</div>-->
+                          <!--</div>-->
+                      </form>
+                  </div>
+
+                </div><!--modal-body-->
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="creat_object()">
+                        提交
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title" id="addModalLabel">
+                        新用户
+                    </h4>
+                </div>
+                <div class="modal-body">
+
+                  <div class="form-l">
+                      <form class="form-horizontal" id="change_form" method="post">
+                          <input class="form-control" name="action" type="hidden" value="change">
+                          <input class="form-control" id="synonyms_id" name="synonyms_id" type="hidden" value="0">
+                          <div class="form-group">
+                              <div class="col-xs-2 control-label">
+                                  <label for="change_word">词条</label>
+                              </div>
+                              <div class="col-xs-10">
+                                  <input class="form-control" id="change_word" name="word"  maxlength="6" style="width: 80%">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <div class="col-xs-2 control-label">
+                                  <label for="change_parent_id">父级词条id</label>
+                              </div>
+                              <div class="col-xs-10">
+                                  <input class="form-control" id="change_parent_id" name="parent_id" style="width: 80%">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <div class="col-xs-2 control-label">
+                                  <label for="change_count">计数</label>
+                              </div>
+                              <div class="col-xs-10">
+                                  <input class="form-control" id="change_count" name="count" style="width: 80%">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <div class="col-xs-2 control-label">
+                                  <label for="change_status">状态是否可用</label>
+                              </div>
+                              <div class="col-xs-10">
+                                  <input class="form-control" id="change_status" name="status" style="width: 80%">
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+
+                </div><!--modal-body-->
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="change_object()">
+                        提交
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+	</div>
+</div><!--/.container-->
+
+<footer>
+  <p class="pull-right">©2016 Company&nbsp;&nbsp;&nbsp;&nbsp;</p>
+</footer>
+
+	<!-- script references -->
+		<script src="{{url_for('static', filename='js/jquery-2.0.0/jquery.min.js')}}"></script>
+		<script src="{{url_for('static', filename='bootstrap-3.3.7-dist/js/bootstrap.min.js')}}"></script>
+		<script src="{{url_for('static', filename='js/scripts.js')}}"></script>
+        <script>
+          function creat_object(){
+            $("#add_form").submit();
+          }
+          
+          function get_synonyms_id(synonyms_id) {
+              var change_word = $("#word_"+synonyms_id).text();
+              var change_parent_id = $("#parent_id_"+synonyms_id).text();
+              var change_count = $("#count_"+synonyms_id).text();
+              var change_status = $("#status_"+synonyms_id).text();
+              $("#synonyms_id").attr({'value': synonyms_id});
+              $("#change_word").attr({'value': change_word});
+              $("#change_parent_id").attr({'value': change_parent_id});
+              $("#change_count").attr({'value': change_count});
+              $("#change_status").attr({'value': change_status});
+          }
+
+          function change_object(){
+            $("#change_form").submit();
+          }
+
+          function delete_object(synonyms_id) {
+              var url = window.location.href;
+              if (confirm("确认删除")==true) {
+                $.post(url, {action: 'delete', synonyms_id: synonyms_id});
+                location.reload();
+              }
+          }
+//
+//          $.validator.setDefaults({
+//            submitHandler: function() {
+//                alert("submitted!");
+//            }
+//          });
+//
+//          $().ready(function() {
+//              $("#add_form").validate({
+//                rules: {
+//                    word: "required",
+//                    parent_id: "required",
+//                    status: "required",
+//                    count: {
+//                        required: true,
+//                        minlength: 2
+//                    }
+//                },
+//                messages: {
+//                    word: "Please enter your firstname",
+//                    parent_id: "Please enter your lastname",
+//                    status: {
+//                        required: "Please enter a username",
+//                        minlength: "Your username must consist of at least 2 characters"
+//                    },
+//                    count: {
+//                        required: "Please provide a password",
+//                        minlength: "Your password must be at least 5 characters long"
+//                    }
+//                }
+//            })
+//          })
+
+        </script>
+	</body>
+</html>

@@ -1,0 +1,56 @@
+bitbucket代码仓库操作指令和git完全一样。
+
+
+第一步，设置本地git环境默认使用的账号以及用户签名
+git config --global user.name "於跃"
+git config --global user.email "yuy@workway.com.cn"
+
+第二步，开始使用
+1.本地无已开发好的代码，则直接克隆repo
+git clone http://yuy@stash.workway.com.cn:7990/scm/aip/qarobot.git
+2.本地已有开发好的代码（未添加git追踪）
+进入项目文件夹
+cd existing-project
+初始化git  
+git init
+添加新增文件到git本地暂存
+git add --all
+提交到本地git，并附带备注
+git commit -m "Initial Commit"
+连接远程git仓库，origin为自定义仓库命名，不清楚的请勿随意更改名称
+git remote add origin http://yuy@stash.workway.com.cn:7990/scm/aip/qarobot.git
+推送已经提交本地git的文件到远程git仓库，origin为自定义仓库命名，master为git主分支
+git push -u origin master
+
+3.本地已有开发好的代码（已添加git追踪）
+进入项目文件夹
+cd existing-project
+连接远程git仓库
+git remote set-url origin http://yuy@stash.workway.com.cn:7990/scm/aip/qarobot.git
+推送所有文件到远程
+git push -u origin --all
+git push origin --tags
+
+第三步，提交文件
+1.提交到本地暂存
+git add --all
+2.提交到本地git仓库，附带注释
+git commit -m "Initial Commit"
+3.已提交本地git的文件推送到远程git，origin为仓库别名，master为代码主分支
+git push -u origin master
+
+第四步，创建并切换分支
+git branch dev
+git checkout dev
+git push -u origin dev
+
+第五步，合并dev到master
+git checkout master
+git merge dev
+
+第六步，删除废弃分支
+git branch -d dev
+
+第七步，更新线上仓库到本地
+git pull
+
